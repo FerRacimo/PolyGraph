@@ -1,10 +1,10 @@
-# PhenoGraph
+# PolyGraph
 
 <img src="https://github.com/FerRacimo/PolyGraph/blob/master/HEIGHT_1KG_YRI_CEU_CHB_PEL_CLM.png" height="300">
 
 # Required libraries
 
-PhenoGraph requires the following R libraries. Make sure they are installed before you run it:
+PolyGraph requires the following R libraries. Make sure they are installed before you run it:
 - optparse
 - admixturegraph
 - msm
@@ -16,7 +16,7 @@ PhenoGraph requires the following R libraries. Make sure they are installed befo
 
 # Input files
 
-To run, PhenoGraph requires 3 input files:
+To run, PolyGraph requires 3 input files:
 - a GWAS input file
 - a neutral input file
 - a graph parameter file
@@ -37,9 +37,9 @@ The neutral input file should contain unlinked neutral SNPs that are not signifi
 
 This file contains information about the admixture graph, which should have been previously inferred using a program like MixMapper (Lipson et al. 2013) or qpGraph (Patterson et al. 2012). SimpleGraph.R is an example graph parameter file. This file uses the R library admixturegraph (Leppälä et al. 2017) to build the graph.
 
-# Running PhenoGraph
+# Running PolyGraph
 
-The command line options for PhenoGraph are as follows. The first 3 options (input file names) are required. We recommend tweaking the size of the proposal steps to obtain adequate MCMC acceptance probabilities.
+The command line options for PolyGraph are as follows. The first 3 options (input file names) are required. We recommend tweaking the size of the proposal steps to obtain adequate MCMC acceptance probabilities.
 
     Rscript RunPhenotype.R \
     -g [GWAS input file name; default: NULL] \
@@ -75,7 +75,7 @@ Here is an example of a full command line:
 
 # Output files
 
-PhenoGraph should produce two output files:
+PolyGraph should produce two output files:
 - The list of test statistics for each branch in the graph (fast to compute; printed out a few seconds after the program is started). This contains:
     - The Q_B statistic for each branch (unsigned, chi-squared distributed with 1 degree of freedom under neutrality)
     - The q_B statistic for each branch(signed, Normal(0,1) distributed under neutrality)
@@ -86,6 +86,6 @@ PhenoGraph should produce two output files:
 
 # Plotting output
 
-To plot the output of an MCMC run in both a boxplot and a "pheno-graph" (for both the alpha parameters of the trace and the q_b statistics), use the Plot_Trace.R script:
+To plot the output of an MCMC run in both a boxplot and a "poly-graph" (for both the alpha parameters of the trace and the q_b statistics), use the Plot_Trace.R script:
 
     Rscript Plot_Trace.R [trace_file.txt] [qfile.txt] [name_of_phenotype] [admixture_graph_file.R] [name_of_boxplot.pdf] [name_of_phenograph_from_mcmc.pdf] [name_of_phenograph_from_qb_statistics.pdf]
