@@ -42,7 +42,7 @@ This file contains information about the admixture graph, which should have been
 The command line options for PolyGraph are as follows. The first 3 options (input file names) are required. We recommend tweaking the size of the proposal steps to obtain adequate MCMC acceptance probabilities.
 
     Rscript RunPhenotype.R \
-    -g [GWAS input file name; default: NULL] \
+    -w [GWAS input file name; default: NULL] \
     -e [Neutral input file name; default: NULL] \
     -r [Graph R file name; default: NULL] \
     -o [MCMC trace output file name; default: MCMC_trace.txt] \
