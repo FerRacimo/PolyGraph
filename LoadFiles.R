@@ -45,7 +45,10 @@ if(exists("gwasfile")){
   randpvals <- sapply( seq(1, length(as.numeric(qtab[,2]))), function(i) { sum(randqtab[i,] > as.numeric(qtab[,2])[i]) / dim(randqtab)[2] } )
   qtab <- cbind(qtab,randpvals)
   colnames(qtab)[length(colnames(qtab))] <- "SignRandPval"
-  
+
+  # For later use
+  pvaltotal <- totalstat[3]
+    
   # Write chi-squared statistics table
   write.table(qtab,file=qfile,quote=FALSE,col.names=TRUE,row.names=FALSE)
   
