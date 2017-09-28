@@ -53,12 +53,15 @@ alpha_prior_stdev <- opt$alphastdev
 alpha_proposize <- opt$alphapropo
 ssfactor <- opt$ssfactor
 qbfactor <- opt$qbfactor
-
+# Default (before going through graphfile)
+pvaltotal <- 0.05 
 
 # Load graph file
 source(graphfile)
 
 # Run PolyGraph MCMC
+print(c(pvaltotal,pvalcutoff))
+if( pvaltotal < as.numeric(pvalcutoff)){
 test <- PolyGraph(outfile,leaves_counts,neut_leaves_counts,effects,runmode,NaN,numsteps,numsample,innerfreqs_proposize,alpha_prior_stdev,alpha_proposize,ssfactor,qbfactor)
-
+}
 
