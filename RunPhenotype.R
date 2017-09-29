@@ -21,7 +21,8 @@ option_list = list(
   make_option(c("-s", "--alphastdev"), type="numeric", default=0.1, help="Standard deviation for alpha prior"),
   make_option(c("-t", "--alphapropo"), type="numeric", default=0.02, help="Size of std dev of proposal distribution for alpha parameters"),
   make_option(c("-u", "--ssfactor"), type="numeric", default=25, help="In spike-and-slab prior, number by which std dev of wide Normal dist. will be divived to obtain std dev of narrow Normal dist."),
-  make_option(c("-f", "--qbfactor"), type="numeric", default=3, help="Number by which maximum Q_B score will be divided to obtain Q_B cutoff. If equal to 0, then switch to using the appropriate chi-squared significance cutoff instead.")
+  make_option(c("-f", "--qbfactor"), type="numeric", default=3, help="Number by which maximum Q_B score will be divided to obtain Q_B cutoff. If equal to 0, then switch to using the appropriate chi-squared significance cutoff instead."),
+  make_option(c("-p", "--pvalcutoff"), type="numeric", default=0.05, help="Maximum p-value that must be obtained from the Q_X statistic to initialize an MCMC run.")
 ); 
  
 opt_parser = OptionParser(option_list=option_list);
