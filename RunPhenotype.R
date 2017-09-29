@@ -60,7 +60,6 @@ pvaltotal <- 0.05
 source(graphfile)
 
 # Run PolyGraph MCMC
-print(c(pvaltotal,pvalcutoff))
 if( pvaltotal < as.numeric(pvalcutoff)){
 test <- PolyGraph(outfile,leaves_counts,neut_leaves_counts,effects,runmode,NaN,numsteps,numsample,innerfreqs_proposize,alpha_prior_stdev,alpha_proposize,ssfactor,qbfactor)
 } else{ print("Q_X statistic not significant enough to initialize MCMC run.") }
