@@ -54,6 +54,8 @@ The command line options for PolyGraph are as follows. The first 3 options (inpu
     -t [Size of std dev of proposal distribution for alpha parameters; default: 0.02] \
     -u [In spike-and-slab prior, number by which std dev of wide Normal dist. will be divived to obtain std dev of narrow Normal dist.; default: 25]
     -f [Number by which maximum Q_B score will be divided to obtain Q_B cutoff. If equal to 0, then switch to using the appropriate chi-squared significance cutoff instead; default: 3]
+    -p [Maximum p-value that must be obtained from the Q_X statistic to initialize an MCMC run; default: 0.05]
+
 
 
 Here is an example of a full command line:
@@ -70,7 +72,8 @@ Here is an example of a full command line:
     -s 0.1 \
     -t 0.02 \
     -u 25 \
-    -f 3
+    -f 3 \
+    -p 0.05
 
 
 # Output files
