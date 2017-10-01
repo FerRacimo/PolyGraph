@@ -26,6 +26,9 @@ if(exists("gwasfile")){
   totalstat <- ChiSquared(supergraph,leaves_freqs,effects,neut_leaves_freqs,total=TRUE,randomize=FALSE)
   qtab <- rbind(qtab, cbind("Total",round(totalstat[1],3),round(totalstat[2],3),totalstat[3]))
   
+  # For later use
+  pvaltotal <- totalstat[3]
+    
   # Calculate sign-randomized chi-squared statistics
   pseudorep <- 1000
   print(paste("Computing sign-randomized P-values, using ",pseudorep," pseudo-replicates...",sep=""))
@@ -46,9 +49,6 @@ if(exists("gwasfile")){
   qtab <- cbind(qtab,randpvals)
   colnames(qtab)[length(colnames(qtab))] <- "SignRandPval"
 
-  # For later use
-  pvaltotal <- totalstat[3]
-    
   # Write chi-squared statistics table
   write.table(qtab,file=qfile,quote=FALSE,col.names=TRUE,row.names=FALSE)
   
