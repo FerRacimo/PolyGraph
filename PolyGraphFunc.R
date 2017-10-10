@@ -1,7 +1,7 @@
 library("admixturegraph")
 library("msm")
 library("reshape2")
-library("pscl")
+suppressMessages(library("pscl"))
 library("parallel")
 library("ggplot2")
 library("gridExtra")
