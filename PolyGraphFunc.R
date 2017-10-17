@@ -303,8 +303,7 @@ DeconstructGraph <- function(supergraph){
       branch <- graphedges[which(graphedges[,1] == child & graphedges[,2] == parent),3]
       return(c(child,parent,branch,1,NaN,NaN,NaN,FALSE))
     } else{
-      parentsidx <- which(supergraph[[1]]$probs[x,] != "")
-      parentsrates <- supergraph[[1]]$probs[x,parentsidx]
+      parentsrates <- supergraph[[1]]$probs[x,][ which(names(supergraph[[1]]$probs[x, ]) %in% names(parents) ) ]
       recrate <- parentsrates[which(parentsrates %in% nameadmixpars)]
       unrecrate <- parentsrates[which(!(parentsrates %in% nameadmixpars))]
       parentA <- names(recrate)
