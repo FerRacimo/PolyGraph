@@ -13,6 +13,7 @@ PolyGraph requires the following R libraries. Make sure they are installed befor
 - parallel
 - ggplot2
 - gridExtra
+- igraph
 
 # Input files
 
