@@ -985,7 +985,7 @@ image.scale <- function(z, zlim, col = heat.colors(12),
 
 
 # Make a graph network plot
-MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel){
+MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel,xlabname){
   
   library("igraph")
   
@@ -1021,11 +1021,30 @@ MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel){
   #plot(g,layout = coords,edge.color=E(g)$color,edge.width=E(g)$width,edge.arrow.mode=2,edge.arrow.size=E(g)$width/5,main=title,vertex.color="white",vertex.frame.color="white",vertex.label.color="black")
   
   par(mar=c(4,3,1,3))
-  image.scale( col=colfunc(length(breaks)-1), breaks=breaks, horiz=TRUE,xlab="selection parameter (alpha)",ylab="")
+  image.scale( col=colfunc(length(breaks)-1), breaks=breaks, horiz=TRUE,xlab=xlabname,ylab="")
   box()
   
   detach("package:igraph", unload=TRUE)
   
+}
+
+
+MakeGraphPlotQfile <- function(tablename,edgevalues,root,phenotype,minsel,maxsel){
+
+table <- read.table(tablename,header=TRUE)
+table <- table[which(table$branc != "Total"),]
+  
+alphacols <- 3
+  
+selcoefs <- table[,alphacols]
+namesselmat <- t(matrix(unlist(strsplit(as.character(table[,1]),"_")),nrow=2))
+selcoefs <- as.data.frame(cbind(namesselmat,selcoefs))
+rownames(selcoefs) <- c()
+colnames(selcoefs) <- c("child","parent","sel")  
+merged <- merge(edgevalues,selcoefs,by=c("child","parent"))
+xlabname <- "q_b statistic"
+  
+MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel,xlabname)  
 }
 
 
@@ -1042,8 +1061,9 @@ MakeGraphPlot <- function(tablename,edgevalues,root,phenotype,minsel,maxsel){
   colnames(selcoefs) <- c("child","parent","sel")
   
   merged <- merge(edgevalues,selcoefs,by=c("child","parent"))
+  xlabname <- "selection parameter (alpha)"
   
-  MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel)
+  MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel,xlabname)
   
 }
 
