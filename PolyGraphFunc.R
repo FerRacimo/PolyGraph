@@ -985,7 +985,7 @@ image.scale <- function(z, zlim, col = heat.colors(12),
 
 
 # Make a graph network plot
-MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel,xlabname){
+MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel){
   
   library("igraph")
   
@@ -1021,7 +1021,7 @@ MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel,xl
   #plot(g,layout = coords,edge.color=E(g)$color,edge.width=E(g)$width,edge.arrow.mode=2,edge.arrow.size=E(g)$width/5,main=title,vertex.color="white",vertex.frame.color="white",vertex.label.color="black")
   
   par(mar=c(4,3,1,3))
-  image.scale( col=colfunc(length(breaks)-1), breaks=breaks, horiz=TRUE,xlab=xlabname,ylab="")
+  image.scale( col=colfunc(length(breaks)-1), breaks=breaks, horiz=TRUE,xlab="selection parameter (alpha)",ylab="")
   box()
   
   detach("package:igraph", unload=TRUE)
@@ -1042,30 +1042,8 @@ MakeGraphPlot <- function(tablename,edgevalues,root,phenotype,minsel,maxsel){
   colnames(selcoefs) <- c("child","parent","sel")
   
   merged <- merge(edgevalues,selcoefs,by=c("child","parent"))
-  xlabname <- "selection parameter (alpha)"
   
-  MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel,xlabname)
-  
-}
-
-
-MakeGraphPlotQfile <- function(tablename,edgevalues,root,phenotype,minsel,maxsel){
-  
-  table <- read.table(tablename,header=TRUE)
-  table <- table[which(table$branc != "Total"),]
-  
-  alphacols <- 3
-  
-  selcoefs <- table[,alphacols]
-  namesselmat <- t(matrix(unlist(strsplit(as.character(table[,1]),"_")),nrow=2))
-  selcoefs <- as.data.frame(cbind(namesselmat,selcoefs))
-  rownames(selcoefs) <- c()
-  colnames(selcoefs) <- c("child","parent","sel")
-  
-  merged <- merge(edgevalues,selcoefs,by=c("child","parent"))
-  xlabname <- "q_b statistic"
-  
-  MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel,xlabname)
+  MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel)
   
 }
 
@@ -1405,6 +1383,77 @@ SimulateWF <- function(supergraph,numSNPs,meaneffect,heritability,selmode,selbra
 }
 
 
+log_beta_prior <- function(freqs,par1,par2){
+    return(dbeta(freqs,par1,par2,log=TRUE))
+}
 
 
 
+
+ChiSquaredReduced <- function(graphedges,contribmat,Fmat,leaves_freqs,effects,total=FALSE,randomize=FALSE){
+
+  checkseg <- which( apply(leaves_freqs,1,sum)/dim(leaves_freqs)[2] < 0.99  & apply(leaves_freqs,1,sum)/dim(leaves_freqs)[2] > 0.01 )
+  leaves_freqs <- leaves_freqs[checkseg,]
+  effects <- effects[checkseg]
+
+  # Randomize effects if necessary
+  if(randomize == TRUE){effects <- effects * sample(c(-1,1),length(effects),replace=TRUE)}
+
+  # Compute mean genetic values
+  meangen <- apply(leaves_freqs * effects, 2, function(x){sum(x)})
+
+  # Scale by average genetic value
+  meangen <- (meangen - mean(meangen))
+
+  # Compute the estimated ancestral genetic variance over all populations
+  meanfreqs <- apply(leaves_freqs,1,mean)
+
+  varmean <- sum(sapply(seq(1,length(meanfreqs)),function(i){
+  score = meanfreqs[i]*(1-meanfreqs[i])*effects[i]^2
+  return(score)
+  }))
+
+  if(total == FALSE){
+  contribmat <- contribmat[,names(meangen)]
+  }
+
+  if(total == FALSE){
+  # Compute Q_B test statistic
+  Qteststat <- apply(contribmat,1, function(x){
+    #print(varmean)
+    lambda <- varmean * (t(x) %*% Fmat %*% x)
+    numerator <- (meangen %*% x)^2
+    final <- numerator / (lambda)
+    return(final)
+  } )
+
+  # Compute q_B test statistic
+  qteststat <- apply(contribmat,1, function(x){
+    #print(varmean)
+    lambda <- varmean * (t(x) %*% Fmat %*% x)
+    numerator <- (meangen %*% x)
+    final <- numerator / sqrt(lambda)
+    return(final)
+  } )
+
+  branchorder <- apply(graphedges,1,function(x){paste(as.character(x[1]),as.character(x[2]),sep="_")})
+  Qteststat <- Qteststat[branchorder]
+  Pval <- 1 - pchisq(Qteststat,1)
+  qteststat <- qteststat[branchorder]
+  allstats <- cbind(Qteststat,qteststat,Pval)
+
+  }
+
+  if(total == TRUE){
+
+    # Compute Q_X statistic
+    numerator <- t(meangen) %*% solve(Fmat) %*% meangen
+    denominator <- varmean
+    Qteststat <- numerator / denominator
+
+    Pval <- 1 - pchisq(Qteststat,qr(Fmat)$rank)
+    allstats <- c(Qteststat,NaN,Pval)
+  }
+
+  return(allstats)
+}

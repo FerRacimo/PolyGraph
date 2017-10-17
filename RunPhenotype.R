@@ -22,7 +22,9 @@ option_list = list(
   make_option(c("-t", "--alphapropo"), type="numeric", default=0.02, help="Size of std dev of proposal distribution for alpha parameters"),
   make_option(c("-u", "--ssfactor"), type="numeric", default=25, help="In spike-and-slab prior, number by which std dev of wide Normal dist. will be divived to obtain std dev of narrow Normal dist."),
   make_option(c("-f", "--qbfactor"), type="numeric", default=3, help="Number by which maximum Q_B score will be divided to obtain Q_B cutoff. If equal to 0, then switch to using the appropriate chi-squared significance cutoff instead."),
-  make_option(c("-p", "--pvalcutoff"), type="numeric", default=0.05, help="Maximum p-value that must be obtained from the Q_X statistic to initialize an MCMC run.")
+  make_option(c("-p", "--pvalcutoff"), type="numeric", default=1, help="Maximum p-value that must be obtained from the Q_X statistic to initialize an MCMC run."),
+  make_option(c("-a", "--rootprior"), type="character", default="unif", help="Type of root prior: unif or beta. If unif, then prior = Unif[0,1]. If beta, then prior = Beta(2,2). The latter only works if root node is labeled as 'r'.")
+  
 ); 
  
 opt_parser = OptionParser(option_list=option_list);
@@ -54,6 +56,9 @@ alpha_prior_stdev <- opt$alphastdev
 alpha_proposize <- opt$alphapropo
 ssfactor <- opt$ssfactor
 qbfactor <- opt$qbfactor
+pvalcutoff <- opt$pvalcutoff
+rootprior <- opt$rootprior
+
 # Default (before going through graphfile)
 pvaltotal <- 0.05 
 
@@ -62,6 +67,6 @@ source(graphfile)
 
 # Run PolyGraph MCMC
 if( pvaltotal < as.numeric(pvalcutoff)){
-test <- PolyGraph(outfile,leaves_counts,neut_leaves_counts,effects,runmode,NaN,numsteps,numsample,innerfreqs_proposize,alpha_prior_stdev,alpha_proposize,ssfactor,qbfactor)
+test <- PolyGraph(outfile,leaves_counts,neut_leaves_counts,effects,runmode,NaN,numsteps,numsample,innerfreqs_proposize,alpha_prior_stdev,alpha_proposize,ssfactor,qbfactor,rootprior)
 } else{ print("Q_X statistic not significant enough to initialize MCMC run.") }
 
