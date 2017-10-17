@@ -79,7 +79,7 @@ Here is an example of a full command line:
 # Output files
 
 PolyGraph should produce two output files:
-- The list of test statistics for each branch in the graph (fast to compute). This contains:
+- The list of test statistics for each branch in the graph (should take only a few minutes to compute). This contains:
     - The Q_B statistic for each branch (unsigned, chi-squared distributed with 1 degree of freedom under neutrality)
     - The q_B statistic for each branch(signed, Normal(0,1) distributed under neutrality)
     - The P-value for the Q_B statistic for each branch computed using the chi-squared distribution.
