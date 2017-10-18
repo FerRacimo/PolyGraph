@@ -10,7 +10,7 @@ graphscript <- args[4]
 output_boxplot <- args[5]
 output_phenograph <- args[6]
 output_phenograph_qfile <- args[7]
-
+minbranch <- args[8]
 
 # Load admixture graph
 source(graphscript)
@@ -28,14 +28,14 @@ alphacols <- grep("alpha_",colnames(trace))
 pdf(output_phenograph,width = 8, height = 8)
 minsel <- -0.3
 maxsel <- 0.3
-MakeGraphPlot(file,edgevalues,"r",phenoname,minsel,maxsel)
+MakeGraphPlot(file,edgevalues,"r",phenoname,minsel,maxsel,minbranch)
 dev.off()
 
 # Make pheno-graph from qfile output
 pdf(output_phenograph_qfile,width = 8, height = 8)
 minsel <- -10
 maxsel <- 10
-MakeGraphPlotQfile(qfile,edgevalues,"r",phenoname,minsel,maxsel)
+MakeGraphPlotQfile(qfile,edgevalues,"r",phenoname,minsel,maxsel,minbranch)
 dev.off()
 
 

@@ -886,7 +886,7 @@ LoadCounts <- function(filename,pops){
 
 
 # Correct positions
-CorrectPos <- function(inputvals,coords,listvertices,root){
+CorrectPos <- function(inputvals,coords,listvertices,root,minbranch=0.075){
   
   # Use only one parent branch when dealing with admixed pops
   inputvals <- inputvals[!duplicated(inputvals[,1]),]
@@ -908,7 +908,9 @@ CorrectPos <- function(inputvals,coords,listvertices,root){
     elemx <- coords[which(listvertices == elem),1]
     elemy <- coords[which(listvertices == elem),2]
     parenty <- as.numeric(done[which(done[,1] == parent),3])
-    addy <- max(0.075,inputvals[which(as.character(inputvals[,1]) == elem & as.character(inputvals[,2]) == parent),3])
+    minbranch <- as.numeric(minbranch)
+    addy <- max(minbranch,inputvals[which(as.character(inputvals[,1]) == elem & as.character(inputvals[,2]) == parent),3])
+    addy <- as.numeric(addy)
     newy <- parenty - addy
     
     done <- rbind(done, c(elem,elemx,newy))
@@ -985,7 +987,7 @@ image.scale <- function(z, zlim, col = heat.colors(12),
 
 
 # Make a graph network plot
-MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel,xlabname){
+MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel,xlabname,minbranch=0.075){
   
   library("igraph")
   
@@ -1009,7 +1011,7 @@ MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel,xl
   
   listvertices <- lapply(list.vertex.attributes(g),function(x) get.vertex.attribute(g,x))[[1]]
   
-  coords <- CorrectPos(inputvals,coords,listvertices,root)
+  coords <- CorrectPos(inputvals,coords,listvertices,root,minbranch)
   
   coords[,2] <- jitter(coords[,2],1)
   
@@ -1029,7 +1031,7 @@ MakeGraphPlotInterior <- function(inputvals,selcoefs,root,title,minsel,maxsel,xl
 }
 
 
-MakeGraphPlotQfile <- function(tablename,edgevalues,root,phenotype,minsel,maxsel){
+MakeGraphPlotQfile <- function(tablename,edgevalues,root,phenotype,minsel,maxsel,minbranch=0.075){
 
 table <- read.table(tablename,header=TRUE)
 table <- table[which(table$branc != "Total"),]
@@ -1044,11 +1046,11 @@ colnames(selcoefs) <- c("child","parent","sel")
 merged <- merge(edgevalues,selcoefs,by=c("child","parent"))
 xlabname <- "q_b statistic"
   
-MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel,xlabname)  
+MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel,xlabname,minbranch)  
 }
 
 
-MakeGraphPlot <- function(tablename,edgevalues,root,phenotype,minsel,maxsel){
+MakeGraphPlot <- function(tablename,edgevalues,root,phenotype,minsel,maxsel,minbranch=0.075){
   
   table <- read.table(tablename,header=TRUE)
   trace <- table[seq(1,dim(table)[1]-1,1),]
@@ -1063,7 +1065,7 @@ MakeGraphPlot <- function(tablename,edgevalues,root,phenotype,minsel,maxsel){
   merged <- merge(edgevalues,selcoefs,by=c("child","parent"))
   xlabname <- "selection parameter (alpha)"
   
-  MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel,xlabname)
+  MakeGraphPlotInterior(merged[c(1,2,3)],as.numeric(as.character(merged[,4])),"r",phenotype,minsel,maxsel,xlabname,minbranch)
   
 }
 
