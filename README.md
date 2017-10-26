@@ -95,3 +95,5 @@ To plot the output of an MCMC run in both a boxplot and a "poly-graph" (for both
     Rscript Plot_Trace.R [trace_file.txt] [qfile.txt] [name_of_phenotype] [admixture_graph_file.R] [name_of_boxplot.pdf] [name_of_polygraph_from_mcmc.pdf] [name_of_polygraph_from_qb_statistics.pdf] [minimum_branch_length; default=0.075]
     
 If the plot looks messy because of short branches not being visible or because some nodes are too cluttered, it is recommended to try different minimum branch lengths.
+
+If [trace_file.txt] is "NA", the script will only output a polygraph based on the qB statistic.
