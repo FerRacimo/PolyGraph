@@ -96,4 +96,4 @@ To plot the output of an MCMC run in both a boxplot and a "poly-graph" (for both
     
 If the plot looks messy because of short branches not being visible or because some nodes are too cluttered, it is recommended to try different minimum branch lengths.
 
-If [trace_file.txt] is "NA", the script will only output a polygraph based on the qB statistic.
+If [trace_file.txt] is "NA", the script will only output a poly-graph based on the qB statistic.
