@@ -1,4 +1,4 @@
-PolyGraph <- function(tracefile,leaves_counts,neut_leaves_counts,effects,runmode,branchcandidate,numsteps,numsample,innerfreqs_proposize,alpha_prior_stdev,alpha_proposize,ssfactor,qbfactor){
+PolyGraph <- function(tracefile,leaves_counts,neut_leaves_counts,effects,runmode,branchcandidate,numsteps,numsample,innerfreqs_proposize,alpha_prior_stdev,alpha_proposize,ssfactor,qbfactor,rootprior="unif"){
 
 #print(branchcandidate) 
 print("Running MCMC...")
@@ -65,10 +65,10 @@ old_alphas <- start_alphas
 log_prob_old_binom <- pbinom(input_leaf_der,input_leaf_tot,old_innerfreqs)
 log_prob_old_graph <- pgraph(deconsgraph,old_innerfreqs,effects,old_alphas)
 
-# Uniform frequency prior
-#log_prob_old_innerfreqs <- log_innerfreqs_prior(old_innerfreqs,innerfreqs_prior_lower,innerfreqs_prior_upper)
-log_prob_old_innerfreqs <- 0
-
+# Root frequency prior
+if(rootprior == "unif"){ log_prob_old_innerfreqs <- 0
+} else if(rootprior == "beta"){ log_prob_old_innerfreqs <- log_beta_prior(old_innerfreqs[,which(colnames(old_innerfreqs) == "r")],2,2)}
+    
 # Alpha prior
 log_prob_old_alphas <- log_alphas_prior_spikeslab(as.numeric(old_alphas[,3]),alpha_prior_mean,alpha_prior_stdev,ssfactor,old_propss)
 
@@ -99,22 +99,23 @@ for( i in seq(1,numsteps)){
   # Propose new frequencies
   new_innerfreqs <- propose_innerfreqsB(old_innerfreqs,innerfreqs_proposize,numSNPs)
   colnames(new_innerfreqs) <- colnames(old_innerfreqs)
+    
   freqtranslogdiff <- translogdiff_innerfreqs(old_innerfreqs,new_innerfreqs,innerfreqs_proposize,numSNPs)
 
   # Evaluate likelihood of new frequencies
   log_prob_new_binom <- pbinom(input_leaf_der,input_leaf_tot,new_innerfreqs)
   log_prob_new_graph <- pgraph(deconsgraph,new_innerfreqs,effects,old_alphas)
   
-  # Uniform frequency prior
-  #log_prob_new_innerfreqs <- log_innerfreqs_prior(new_innerfreqs,innerfreqs_prior_lower,innerfreqs_prior_upper)
-  log_prob_new_innerfreqs <- 0
-  
+  # Root frequency prior
+  if(rootprior == "unif"){ log_prob_new_innerfreqs <- 0
+  } else if(rootprior == "beta"){ log_prob_new_innerfreqs <- log_beta_prior(new_innerfreqs[,which(colnames(new_innerfreqs) == "r")],2,2)}
+    
   log_prob_trans_freq <- apply(freqtranslogdiff, 1, function(y){
     return(sum(y))
   })
   log_prob_new <- log_prob_new_binom + log_prob_new_graph + log_prob_new_innerfreqs
   log_prob_old <- log_prob_old_binom + log_prob_old_graph + log_prob_old_innerfreqs
-  
+    
   logpostdiff <-  log_prob_new - log_prob_old + log_prob_trans_freq
   logunifsample <- log(runif(numSNPs,0,1))
 
