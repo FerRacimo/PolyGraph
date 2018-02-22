@@ -62,7 +62,7 @@ The command line options for PolyGraph are as follows. The first 3 options (inpu
 Here is an example of a full command line:
 
     Rscript RunPhenotype.R \
-    -g GWAS_HEIGHT_1000genomes_allpops.txt \
+    -w GWAS_HEIGHT_1000genomes_allpops.txt \
     -e Neut_HEIGHT_1000genomes_allpops.txt \
     -r 1KG_YRI_CEU_CHB_PEL_CLM.R \
     -o trace_HEIGHT_1KG_YRI_CEU_CHB_PEL_CLM.txt \
