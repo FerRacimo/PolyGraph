@@ -6,8 +6,6 @@ library("parallel")
 library("ggplot2")
 library("gridExtra")
 
-#F
-
 # Function for breakin graph into component pieces (from admixture graph package)
 break_graph <- function(graph) {
   nodes <- graph$nodes
